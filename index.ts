@@ -102,7 +102,7 @@ function validateData(
 				}
 
 				// Gender - Only Male and Female
-				const allowedGenders = ["Male", "Female"];
+				const allowedGenders = ["Male", "Female", "male", "female"];
 				if (fieldName === "gender" && !allowedGenders.includes(cell)) {
 					return { isValid: false, error: `Row ${rowIndex + 1}, Column ${colIndex + 1} (gender): Expected "Male" or "Female", but found "${cell}".` };
 				}
@@ -113,7 +113,7 @@ function validateData(
 				}
 
 				const age = parseInt(cell, 10);
-				if (age < 0 || age > 125) {
+				if (age < 18 || age > 125) {
 					return { isValid: false, error: `Row ${rowIndex + 1}, Column ${colIndex + 1} (age): Age must be between 0 and 125.` };
 				}
 				if (cell.length > 3) {
@@ -212,9 +212,6 @@ function parseCSV(
 		}
 
 		if (currentState === "atTerminator") {
-			if (currentWord.trim() !== "") {
-				currentDataArray.push(currentWord);
-			}
 			data.push(currentDataArray);
 			currentDataArray = [];
 		}
@@ -262,6 +259,6 @@ if (csvData.isValid && csvData.data) {
 	}
 	console.info("CSV data is valid.");
 } else {
-	console.error(csvData.error)
+	// console.error(csvData.error)
 	process.exit(1);
 }

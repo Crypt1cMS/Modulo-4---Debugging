@@ -69,12 +69,11 @@ function validateData(data) {
                 };
             }
         }
-        // Validate each cell based on the expected type
+        // Validate each cell depending on the expected type
         for (let colIndex = 0; colIndex < schema.length; colIndex++) {
             const cell = row[colIndex];
             const { type, fieldName } = schema[colIndex];
             if (type === "varchar") {
-                // Validate only letters and maximum of 50 characters
                 if (typeof cell !== "string" || !/^[a-zA-Z\s,]+$/.test(cell)) {
                     return { isValid: false, error: `Row ${rowIndex + 1}, Column ${colIndex + 1} (${fieldName}): Expected letters only.` };
                 }
@@ -82,18 +81,18 @@ function validateData(data) {
                     return { isValid: false, error: `Row ${rowIndex + 1}, Column ${colIndex + 1} (${fieldName}): Exceeds 50 character limit.` };
                 }
                 // Gender - Only Male and Female
-                const allowedGenders = ["Male", "Female"];
+                const allowedGenders = ["Male", "Female", "male", "female"];
                 if (fieldName === "gender" && !allowedGenders.includes(cell)) {
                     return { isValid: false, error: `Row ${rowIndex + 1}, Column ${colIndex + 1} (gender): Expected "Male" or "Female", but found "${cell}".` };
                 }
             }
             else if (type === "integer") {
-                // Validate that age is an integer and does not exceed three digits
+                // Validate age
                 if (!/^\d+$/.test(cell)) {
                     return { isValid: false, error: `Row ${rowIndex + 1}, Column ${colIndex + 1} (${fieldName}): Expected an integer.` };
                 }
                 const age = parseInt(cell, 10);
-                if (age < 0 || age > 125) {
+                if (age < 18 || age > 125) {
                     return { isValid: false, error: `Row ${rowIndex + 1}, Column ${colIndex + 1} (age): Age must be between 0 and 125.` };
                 }
                 if (cell.length > 3) {
@@ -159,9 +158,6 @@ function parseCSV(filePath, options) {
             currentWord = "";
         }
         if (currentState === "atTerminator") {
-            if (currentWord.trim() !== "") {
-                currentDataArray.push(currentWord);
-            }
             data.push(currentDataArray);
             currentDataArray = [];
         }
@@ -202,7 +198,7 @@ if (csvData.isValid && csvData.data) {
     console.info("CSV data is valid.");
 }
 else {
-    console.error(csvData.error);
+    // console.error(csvData.error)
     process.exit(1);
 }
 //# sourceMappingURL=index.js.map
